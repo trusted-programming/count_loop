@@ -19,4 +19,3 @@ Use instead:
 ```rust
 // example code that does not raise a warning
 ```
-# count_loop
