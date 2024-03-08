@@ -4,6 +4,7 @@
 extern crate rustc_ast;
 
 use clippy_utils::diagnostics::span_lint_and_help;
+use rustc_ast::MethodCall;
 use rustc_lint::{EarlyContext, EarlyLintPass};
 
 dylint_linting::declare_early_lint! {
@@ -35,7 +36,7 @@ impl<'tcx> EarlyLintPass for CountLoop {
             body: _,
             label: _,
             kind: _,
-        } = expr.kind
+        } = &expr.kind
         {
             span_lint_and_help(
                 cx,
@@ -43,8 +44,34 @@ impl<'tcx> EarlyLintPass for CountLoop {
                 expr.span,
                 &format!("found for loop, code: 213423"),
                 None,
-                &format!("count to 10"),
+                "",
             );
+        }
+        if let rustc_ast::ExprKind::MethodCall(method_call) = &expr.kind {
+            let iters = vec!["iter", "into_iter", "iter_mut"];
+            if iters.contains(&method_call.seg.ident.as_str()) {
+                span_lint_and_help(
+                    cx,
+                    COUNT_LOOP,
+                    expr.span,
+                    &format!("found iterator, code: 213932"),
+                    None,
+                    "",
+                );
+            }
+        }
+        if let rustc_ast::ExprKind::MethodCall(method_call) = &expr.kind {
+            let iters = vec!["par_iter", "into_par_iter", "par_iter_mut"];
+            if iters.contains(&method_call.seg.ident.as_str()) {
+                span_lint_and_help(
+                    cx,
+                    COUNT_LOOP,
+                    expr.span,
+                    &format!("found par iterator, code: 213312"),
+                    None,
+                    "",
+                );
+            }
         }
     }
 }
