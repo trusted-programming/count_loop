@@ -4,7 +4,6 @@
 extern crate rustc_ast;
 
 use clippy_utils::diagnostics::span_lint_and_help;
-use rustc_ast::MethodCall;
 use rustc_lint::{EarlyContext, EarlyLintPass};
 
 dylint_linting::declare_early_lint! {
